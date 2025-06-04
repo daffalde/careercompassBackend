@@ -21,7 +21,7 @@ export async function selectData(req, res) {
   try {
     const resp = await pool.query(
       "SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan WHERE id_perusahaan = $1",
-      { id }
+      [id]
     );
     res.json(resp.rows);
   } catch (e) {
