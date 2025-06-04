@@ -6,6 +6,7 @@ import { routerLowongan } from "./src/route/lowonganController.js";
 import { routeTersimpan } from "./src/route/tersimpanRoute.js";
 import { routeAdmin } from "./src/route/adminRoute.js";
 import { routeCv } from "./src/route/cvRoute.js";
+import { routeApp } from "./src/route/appRoute.js";
 
 const app = express();
 app.use(express.json());
@@ -21,5 +22,6 @@ app.use("/auth", routeAdmin);
 app.use("/data", routerLowongan);
 app.use("/data", routeTersimpan);
 app.use("/data", routeCv);
+app.use("/data", routeApp);
 
 app.listen(5000);
