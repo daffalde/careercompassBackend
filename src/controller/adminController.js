@@ -111,9 +111,10 @@ export async function handleLogin(req, res) {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query("SELECT * FROM admin WHERE email = $1", [
-      email,
-    ]);
+    const result = await pool.query(
+      "SELECT id_admin, email,role, nama, profil, created_at FROM admin WHERE email = $1",
+      [email]
+    );
     if (result.rowCount === 0)
       return res.status(401).json({ message: "email tidak ditemukan" });
 
@@ -126,7 +127,7 @@ export async function handleLogin(req, res) {
       { id: user.id_admin, email: user.email },
       process.env.JWT_TOKEN
     );
-    res.json({ token: token, data: result });
+    res.json({ token: token, data: result.rows });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

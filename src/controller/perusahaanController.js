@@ -135,7 +135,7 @@ export async function handleLogin(req, res) {
 
   try {
     const result = await pool.query(
-      "SELECT * FROM perusahaan WHERE email = $1",
+      "SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan WHERE email = $1",
       [email]
     );
     if (result.rowCount === 0)
