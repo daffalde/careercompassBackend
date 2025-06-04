@@ -2,7 +2,9 @@ import { pool } from "../db/db.js";
 
 export async function getData(req, res) {
   try {
-    const resp = await pool.query("SELECT * FROM lowongan");
+    const resp = await pool.query(
+      "SELECT * FROM lowongan JOIN perusahaan ON lowongan.id_perusahaan=perusahaan.id_perusahaan"
+    );
     res.json(resp.rows);
   } catch (e) {
     res.status(500).json({ message: e.message });
