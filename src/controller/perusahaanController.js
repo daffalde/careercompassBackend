@@ -65,7 +65,7 @@ export async function handleUpdate(req, res) {
 
   try {
     await pool.query(
-      "UPDATE perusahaan SET nama_perusahaan = $1, situs = $2, tahun_didirikan = $3, bidang = $4, karyawan = $5, lokasi = $6,provinsi = $7,tentang = $8,visi = $9,misi = $10 WHERE id_perusahaan = $11",
+      "UPDATE perusahaan SET nama_perusahaan = COALESCE($1, nama_perusahaan), situs = COALESCE($2, situs), tahun_didirikan = COALESCE($3, tahun_didirikan), bidang = COALESCE($4, bidang), karyawan = COALESCE($5, karyawan), lokasi = COALESCE($6, lokasi), provinsi = COALESCE($7, provinsi), tentang = COALESCE($8, tentang), visi = COALESCE($9, visi), misi = COALESCE($10, misi) WHERE id_perusahaan = $11",
       [
         nama,
         situs,
