@@ -150,7 +150,7 @@ export async function handleLogin(req, res) {
       { id: user.id_perusahaan, email: user.email },
       process.env.JWT_TOKEN
     );
-    res.json({ token: token });
+    res.json({ token: token, data: result });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
