@@ -3,7 +3,7 @@ import { pool } from "../db/db.js";
 export async function getData(req, res) {
   try {
     const resp = await pool.query(
-      "SELECT id_lowongan, posisi, gaji_min, gaji_max, kategori, jenis, tingkatan, lowongan.tentang AS tentang_lowongan, syarat, skill, lowongan.created_at AS lowongan_created_at, id_perusahaan, email, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan,perusahaan.tentang AS tentang_perusahaan, lokasi, provinsi, visi, misi, role,perusahaan.created_at AS perusahaan_created_at FROM lowongan JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan"
+      "SELECT id_lowongan, posisi, gaji_min, gaji_max, kategori, jenis, tingkatan, lowongan.tentang AS tentang_lowongan, syarat, skill, lowongan.created_at AS lowongan_created_at, perusahaan.id_perusahaan AS perusahaan_id, email, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan,perusahaan.tentang AS tentang_perusahaan, lokasi, provinsi, visi, misi, role,perusahaan.created_at AS perusahaan_created_at FROM lowongan JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan"
     );
     res.json(resp.rows);
   } catch (e) {
