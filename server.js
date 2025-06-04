@@ -3,6 +3,7 @@ import cors from "cors";
 import { routePelamar } from "./src/route/pelamarRoute.js";
 import { routePerusahaan } from "./src/route/perusahaanRoute.js";
 import { routerLowongan } from "./src/route/lowonganController.js";
+import { routeTersimpan } from "./src/route/tersimpanRoute.js";
 
 const app = express();
 app.use(express.json());
@@ -15,5 +16,6 @@ app.get("/", (req, res) => {
 app.use("/auth", routePelamar);
 app.use("/auth", routePerusahaan);
 app.use("/data", routerLowongan);
+app.use("/data", routeTersimpan);
 
 app.listen(5000);
