@@ -95,7 +95,8 @@ export async function handleRegister(req, res) {
     const resp = await pool.query("SELECT * FROM admin WHERE email = $1", [
       email,
     ]);
-    if (resp.rowCount != 0) return res.json({ message: "data sudah ada" });
+    if (resp.rowCount != 0)
+      return res.status(409).json({ message: "data sudah ada" });
     await pool.query(
       "INSERT INTO admin (email,password,nama) VALUES ($1,$2,$3)",
       [email, hashPass, name]
