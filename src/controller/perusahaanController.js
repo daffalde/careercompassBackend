@@ -87,7 +87,7 @@ export async function handleUpdate(req, res) {
 }
 
 export async function handleProfil(req, res) {
-  const picture = req.file;
+  const picture = req.files.picture[0];
   const { id } = req.params;
 
   const date = String(Date.now());
