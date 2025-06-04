@@ -111,12 +111,16 @@ export async function handleLogin(req, res) {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query(
+    const result = await pool.query("SELECT * FROM admin WHERE email = $1", [
+      email,
+    ]);
+    if (result.rowCount === 0)
+      return res.status(401).json({ message: "email tidak ditemukan" });
+
+    const resp = await pool.query(
       "SELECT id_admin, email,role, nama, profil, created_at FROM admin WHERE email = $1",
       [email]
     );
-    if (result.rowCount === 0)
-      return res.status(401).json({ message: "email tidak ditemukan" });
 
     const user = result.rows[0];
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -127,7 +131,7 @@ export async function handleLogin(req, res) {
       { id: user.id_admin, email: user.email },
       process.env.JWT_TOKEN
     );
-    res.json({ token: token, data: result.rows });
+    res.json({ token: token, data: resp.rows });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }

@@ -135,11 +135,15 @@ export async function handleLogin(req, res) {
 
   try {
     const result = await pool.query(
-      "SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan WHERE email = $1",
+      "SELECT * FROM perusahaan WHERE email = $1",
       [email]
     );
     if (result.rowCount === 0)
       return res.status(401).json({ message: "email tidak ditemukan" });
+    const resp = await pool.query(
+      "SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan WHERE email = $1",
+      [email]
+    );
 
     const user = result.rows[0];
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -150,7 +154,7 @@ export async function handleLogin(req, res) {
       { id: user.id_perusahaan, email: user.email },
       process.env.JWT_TOKEN
     );
-    res.json({ token: token, data: result });
+    res.json({ token: token, data: resp.rows });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
