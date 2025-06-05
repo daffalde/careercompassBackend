@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getData,
+  getDataId,
   handleDelete,
   handleLogin,
   handleProfil,
@@ -13,6 +14,7 @@ import { upload } from "../middleware/multer.js";
 export const routePelamar = express.Router();
 
 routePelamar.get("/pelamar", getData);
+routePelamar.get("/pelamar/:id", getDataId);
 routePelamar.delete("/pelamar/:id", authToken, handleDelete);
 routePelamar.patch("/pelamar/:id", authToken, handleUpdate);
 routePelamar.patch(

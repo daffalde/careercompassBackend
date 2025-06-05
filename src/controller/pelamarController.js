@@ -16,6 +16,19 @@ export async function getData(req, res) {
   }
 }
 
+export async function getDataId(req, res) {
+  const { id } = req.params;
+  try {
+    const resp = await pool.query(
+      "SELECT id_pelamar, email,role, nama_pelamar, profil, spesialis, lokasi, provinsi, tentang, skill, created_at FROM pelamar WHERE id_pelamar = $1",
+      [id]
+    );
+    res.json(resp.rows);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+}
+
 export async function handleDelete(req, res) {
   const { id } = req.params;
 
