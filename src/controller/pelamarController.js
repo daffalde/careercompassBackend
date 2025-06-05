@@ -54,8 +54,8 @@ export async function handleUpdate(req, res) {
 
   try {
     await pool.query(
-      "UPDATE pelamar SET nama_pelamar = $1, spesialis = $2, lokasi = $3, provinsi = $4, tentang = $5, skill = $6 WHERE id_pelamar = $7",
-      [nama, spesialis, lokasi, provinsi, tentang, skill, id]
+      "UPDATE pelamar SET nama_pelamar = COALESCE($1, nama_pelamar),spesialis = COALESCE($2, spesialis),lokasi = COALESCE($3, lokasi),provinsi = COALESCE($4, provinsi),tentang = COALESCE($5, tentang),skill = COALESCE($6, skill) WHERE id_pelamar = $7",
+      [(nama, spesialis, lokasi, provinsi, tentang, skill, id)]
     );
     res.json({ message: "data diubah" });
   } catch (e) {
