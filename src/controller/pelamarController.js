@@ -130,7 +130,7 @@ export async function handleLogin(req, res) {
     if (result.rowCount === 0)
       return res.status(401).json({ message: "email tidak ditemukan" });
     const resp = await pool.query(
-      "SELECT id_pelamar, role FROM pelamar WHERE email = $1",
+      "SELECT id_pelamar, role,nama_pelamar,email,profil  FROM pelamar WHERE email = $1",
       [email]
     );
 
