@@ -9,7 +9,7 @@ export async function getData(req, res) {
   const { cursor, limit, nama, provinsi } = {
     cursor: parseInt(req.query.cursor, 10) || null,
     limit: parseInt(req.query.limit, 10) || 10,
-    nama: req.query.posisi || null,
+    nama: req.query.nama_perusahaan || null,
     provinsi: req.query.provinsi || null,
   };
 
