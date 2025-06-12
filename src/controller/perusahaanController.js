@@ -5,12 +5,67 @@ import "dotenv/config";
 import { storage } from "../db/appwrite.js";
 import { InputFile } from "node-appwrite/file";
 
+// export async function getData(req, res) {
+//   try {
+//     const resp = await pool.query(
+//       "SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan"
+//     );
+//     res.json(resp.rows);
+//   } catch (e) {
+//     res.status(500).json({ message: e.message });
+//   }
+// }
+
 export async function getData(req, res) {
+  const { cursor, limit, nama, provinsi } = {
+    cursor: parseInt(req.query.cursor, 10) || null,
+    limit: parseInt(req.query.limit, 10) || 24,
+    nama: req.query.posisi || null,
+    provinsi: req.query.provinsi || null,
+  };
+
   try {
-    const resp = await pool.query(
-      "SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan"
-    );
-    res.json(resp.rows);
+    const values = [];
+    const conditions = [];
+
+    let query = `
+      SELECT id_perusahaan, email,role, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan, lokasi,provinsi,tentang,visi,misi, created_at FROM perusahaan
+    `;
+
+    if (cursor) {
+      conditions.push(`id_perusahaan < $${values.length + 1}`);
+      values.push(cursor);
+    }
+
+    if (nama) {
+      conditions.push(`nama_perusahaan ILIKE $${values.length + 1}`);
+      values.push(`%${posisi}%`);
+    }
+
+    if (provinsi) {
+      conditions.push(`provinsi ILIKE $${values.length + 1}`);
+      values.push(`%${provinsi}%`);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(" AND ");
+    }
+
+    query += ` ORDER BY id_perusahaan DESC LIMIT $${values.length + 1}`;
+    values.push(limit + 1);
+
+    const resp = await pool.query(query, values);
+    const results = resp.rows;
+
+    const hasNext = results.length > limit;
+    if (hasNext) results.pop();
+
+    const nextCursor = hasNext ? results[results.length - 1].id_lowongan : null;
+
+    res.json({
+      data: results,
+      nextCursor,
+    });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
