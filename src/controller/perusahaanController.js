@@ -49,7 +49,9 @@ export async function getData(req, res) {
     const hasNext = results.length > limit;
     if (hasNext) results.pop();
 
-    const nextCursor = hasNext ? results[results.length - 1].id_lowongan : null;
+    const nextCursor = hasNext
+      ? results[results.length - 1].id_perusahaan
+      : null;
 
     res.json({
       data: results,
