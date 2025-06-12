@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getAllData,
   getData,
   getDataId,
   handleDelete,
@@ -10,6 +11,7 @@ import { authToken } from "../middleware/authToken.js";
 
 export const routerLowongan = express.Router();
 
+routerLowongan.get("/all-lowongan", getAllData);
 routerLowongan.get("/lowongan", getData);
 routerLowongan.get("/lowongan/:id", getDataId);
 routerLowongan.post("/lowongan", authToken, handleInsert);
