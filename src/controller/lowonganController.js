@@ -15,15 +15,20 @@ export async function getData(req, res) {
     const conditions = [];
 
     let query = `
-      SELECT id_lowongan, posisi, gaji_min, gaji_max, kategori, jenis, tingkatan,
-             lowongan.tentang AS tentang_lowongan, syarat, skill,
-             lowongan.created_at AS lowongan_created_at,
-             perusahaan.id_perusahaan AS perusahaan_id, email, nama_perusahaan,
-             picture, situs, tahun_didirikan, bidang, karyawan,
-             perusahaan.tentang AS tentang_perusahaan, lokasi, provinsi,
-             visi, misi, role, perusahaan.created_at AS perusahaan_created_at
-      FROM lowongan
-      JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan
+      SELECT l.id_lowongan, l.posisi, l.gaji_min, l.gaji_max, l.kategori, l.jenis, l.tingkatan,
+    l.tentang AS tentang_lowongan, l.syarat, l.skill,
+    l.created_at AS lowongan_created_at,
+
+    p.id_perusahaan AS perusahaan_id, p.email, p.nama_perusahaan,
+    p.picture, p.situs, p.tahun_didirikan, p.bidang, p.karyawan,
+    p.tentang AS tentang_perusahaan, p.lokasi, p.provinsi,
+    p.visi, p.misi, p.role, p.created_at AS perusahaan_created_at,
+
+    lt.id_lowongan_tersimpan, lt.id_pelamar
+FROM lowongan l
+JOIN perusahaan p ON l.id_perusahaan = p.id_perusahaan
+LEFT JOIN lowongan_tersimpan lt ON l.id_lowongan = lt.id_lowongan
+
     `;
 
     if (cursor) {
