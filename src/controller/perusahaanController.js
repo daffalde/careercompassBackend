@@ -28,7 +28,7 @@ export async function getData(req, res) {
 
     if (nama) {
       conditions.push(`nama_perusahaan ILIKE $${values.length + 1}`);
-      values.push(`%${posisi}%`);
+      values.push(`%${nama}%`);
     }
 
     if (provinsi) {
