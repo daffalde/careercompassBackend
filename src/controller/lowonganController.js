@@ -1,11 +1,45 @@
 import { pool } from "../db/db.js";
 
 export async function getData(req, res) {
+  const { cursor, limit } = {
+    cursor: parseInt(req.query.cursor, 10) || null,
+    limit: parseInt(req.query.limit, 10) || 10,
+  };
+
   try {
-    const resp = await pool.query(
-      "SELECT id_lowongan, posisi, gaji_min, gaji_max, kategori, jenis, tingkatan, lowongan.tentang AS tentang_lowongan, syarat, skill, lowongan.created_at AS lowongan_created_at, perusahaan.id_perusahaan AS perusahaan_id, email, nama_perusahaan, picture, situs, tahun_didirikan, bidang, karyawan,perusahaan.tentang AS tentang_perusahaan, lokasi, provinsi, visi, misi, role,perusahaan.created_at AS perusahaan_created_at FROM lowongan JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan"
-    );
-    res.json(resp.rows);
+    const values = [];
+    let query = `
+      SELECT id_lowongan, posisi, gaji_min, gaji_max, kategori, jenis, tingkatan,
+             lowongan.tentang AS tentang_lowongan, syarat, skill,
+             lowongan.created_at AS lowongan_created_at,
+             perusahaan.id_perusahaan AS perusahaan_id, email, nama_perusahaan,
+             picture, situs, tahun_didirikan, bidang, karyawan,
+             perusahaan.tentang AS tentang_perusahaan, lokasi, provinsi,
+             visi, misi, role, perusahaan.created_at AS perusahaan_created_at
+      FROM lowongan
+      JOIN perusahaan ON lowongan.id_perusahaan = perusahaan.id_perusahaan
+    `;
+
+    if (cursor) {
+      query += ` WHERE id_lowongan < $1`;
+      values.push(cursor);
+    }
+
+    query += ` ORDER BY id_lowongan DESC LIMIT $${values.length + 1}`;
+    values.push(limit + 1);
+
+    const resp = await pool.query(query, values);
+    const results = resp.rows;
+
+    const hasNext = results.length > limit;
+    if (hasNext) results.pop(); // hapus item kelebihan untuk jaga page size
+
+    const nextCursor = hasNext ? results[results.length - 1].id_lowongan : null;
+
+    res.json({
+      data: results,
+      nextCursor,
+    });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
