@@ -3,7 +3,7 @@ import { pool } from "../db/db.js";
 export async function getData(req, res) {
   const { cursor, limit, posisi, provinsi, jenis, kategori } = {
     cursor: parseInt(req.query.cursor, 10) || null,
-    limit: parseInt(req.query.limit, 10) || 12,
+    limit: parseInt(req.query.limit, 10) || 24,
     posisi: req.query.posisi || null,
     provinsi: req.query.provinsi || null,
     jenis: req.query.jenis || null,
