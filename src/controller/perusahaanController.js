@@ -6,10 +6,10 @@ import { storage } from "../db/appwrite.js";
 import { InputFile } from "node-appwrite/file";
 
 export async function getData(req, res) {
-  const { cursor, limit, nama, provinsi } = {
+  const { cursor, limit, nama_perusahaan, provinsi } = {
     cursor: parseInt(req.query.cursor, 10) || null,
     limit: parseInt(req.query.limit, 10) || 10,
-    nama: req.query.nama_perusahaan || null,
+    nama_perusahaan: req.query.nama_perusahaan || null,
     provinsi: req.query.provinsi || null,
   };
 
@@ -26,9 +26,9 @@ export async function getData(req, res) {
       values.push(cursor);
     }
 
-    if (nama) {
+    if (nama_perusahaan) {
       conditions.push(`nama_perusahaan ILIKE $${values.length + 1}`);
-      values.push(`%${nama}%`);
+      values.push(`%${nama_perusahaan}%`);
     }
 
     if (provinsi) {
