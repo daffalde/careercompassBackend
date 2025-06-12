@@ -1,13 +1,19 @@
 import { pool } from "../db/db.js";
 
 export async function getData(req, res) {
-  const { cursor, limit } = {
+  const { cursor, limit, posisi, provinsi, jenis, kategori } = {
     cursor: parseInt(req.query.cursor, 10) || null,
     limit: parseInt(req.query.limit, 10) || 10,
+    posisi: req.query.posisi || null,
+    provinsi: req.query.provinsi || null,
+    jenis: req.query.jenis || null,
+    kategori: req.query.kategori || null,
   };
 
   try {
     const values = [];
+    const conditions = [];
+
     let query = `
       SELECT id_lowongan, posisi, gaji_min, gaji_max, kategori, jenis, tingkatan,
              lowongan.tentang AS tentang_lowongan, syarat, skill,
@@ -21,8 +27,32 @@ export async function getData(req, res) {
     `;
 
     if (cursor) {
-      query += ` WHERE id_lowongan < $1`;
+      conditions.push(`id_lowongan < $${values.length + 1}`);
       values.push(cursor);
+    }
+
+    if (posisi) {
+      conditions.push(`posisi ILIKE $${values.length + 1}`);
+      values.push(`%${posisi}%`);
+    }
+
+    if (provinsi) {
+      conditions.push(`provinsi ILIKE $${values.length + 1}`);
+      values.push(`%${provinsi}%`);
+    }
+
+    if (jenis) {
+      conditions.push(`jenis ILIKE $${values.length + 1}`);
+      values.push(`%${jenis}%`);
+    }
+
+    if (kategori) {
+      conditions.push(`kategori ILIKE $${values.length + 1}`);
+      values.push(`%${kategori}%`);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ` + conditions.join(" AND ");
     }
 
     query += ` ORDER BY id_lowongan DESC LIMIT $${values.length + 1}`;
@@ -32,7 +62,7 @@ export async function getData(req, res) {
     const results = resp.rows;
 
     const hasNext = results.length > limit;
-    if (hasNext) results.pop(); // hapus item kelebihan untuk jaga page size
+    if (hasNext) results.pop();
 
     const nextCursor = hasNext ? results[results.length - 1].id_lowongan : null;
 
