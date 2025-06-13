@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 import { storage } from "../db/appwrite.js";
 import { InputFile } from "node-appwrite/file";
+import path from "path";
 
 export async function getData(req, res) {
   try {
@@ -67,27 +68,40 @@ export async function handleProfil(req, res) {
   const picture = req.file;
   const { id } = req.params;
 
+  if (!picture) {
+    return res.status(400).json({ message: "File gambar tidak ditemukan" });
+  }
+
+  const ext = path.extname(picture.originalname);
   const date = String(Date.now());
+  const filename = `${date}${ext}`;
+  const bucketId = process.env.APPWRITE_BUCKET;
+  const projectId = process.env.APPWRITE_PROJECT;
 
   try {
     const resp = await pool.query(
       "SELECT profil FROM pelamar WHERE id_pelamar = $1",
       [id]
     );
-    const fileId = resp.rows[0].profil?.split("/")[8];
-    if (fileId) {
-      await storage.deleteFile(process.env.APPWRITE_BUCKET, fileId);
+
+    if (resp.rowCount === 0) {
+      return res.status(404).json({ message: "Pelamar tidak ditemukan" });
     }
+
+    const oldProfilUrl = resp.rows[0].profil;
+    const oldFileId = oldProfilUrl?.split("/files/")[1]?.split("/")[0];
+
+    if (oldFileId) {
+      await storage.deleteFile(bucketId, oldFileId);
+    }
+
     await storage.createFile(
-      process.env.APPWRITE_BUCKET,
+      bucketId,
       date,
-      InputFile.fromBuffer(
-        picture.buffer,
-        `${date}.${picture.originalname.split(".")[1]}`
-      )
+      InputFile.fromBuffer(picture.buffer, filename)
     );
 
-    const picturePath = `https://fra.cloud.appwrite.io/v1/storage/buckets/683faf7b00162513b232/files/${date}/view?project=682aeccf0023541588ed&mode=admin`;
+    const picturePath = `https://fra.cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${date}/view?project=${projectId}&mode=admin`;
 
     await pool.query("UPDATE pelamar SET profil = $1 WHERE id_pelamar = $2", [
       picturePath,
@@ -96,6 +110,7 @@ export async function handleProfil(req, res) {
 
     res.json({ message: "Foto profil diubah" });
   } catch (e) {
+    console.error(e);
     res.status(500).json({ message: e.message });
   }
 }
