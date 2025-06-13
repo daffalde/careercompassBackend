@@ -5,6 +5,22 @@ import "dotenv/config";
 import { storage } from "../db/appwrite.js";
 import { InputFile } from "node-appwrite/file";
 
+export async function getAllData(req, res) {
+  try {
+    const query = `
+      SELECT id_perusahaan, email, role, nama_perusahaan, picture, situs, 
+             tahun_didirikan, bidang, karyawan, lokasi, provinsi, tentang, 
+             visi, misi, created_at 
+      FROM perusahaan
+    `;
+
+    const resp = await pool.query(query);
+    res.json({ data: resp.rows });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+}
+
 export async function getData(req, res) {
   const { cursor, limit, nama_perusahaan, provinsi } = {
     cursor: parseInt(req.query.cursor, 10) || null,

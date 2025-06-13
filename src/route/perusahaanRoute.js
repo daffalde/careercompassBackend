@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  getAllData,
   getData,
   handleDelete,
   handleLogin,
@@ -13,6 +14,7 @@ import { upload } from "../middleware/multer.js";
 
 export const routePerusahaan = express.Router();
 
+routePerusahaan.get("/all-perusahaan", getAllData);
 routePerusahaan.get("/perusahaan", getData);
 routePerusahaan.get("/perusahaan/:id", selectData);
 routePerusahaan.delete("/perusahaan/:id", authToken, handleDelete);
