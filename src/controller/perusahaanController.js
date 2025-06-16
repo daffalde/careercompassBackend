@@ -161,7 +161,11 @@ export async function handleProfil(req, res) {
     );
     const fileId = resp.rows[0].picture?.split("/")[8];
     if (fileId) {
-      await storage.deleteFile(process.env.APPWRITE_BUCKET, fileId);
+      try {
+        await storage.deleteFile(process.env.APPWRITE_BUCKET, fileId);
+      } catch (e) {
+        console.log(e);
+      }
     }
     await storage.createFile(
       process.env.APPWRITE_BUCKET,

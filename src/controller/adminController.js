@@ -63,7 +63,11 @@ export async function handleProfil(req, res) {
     );
     const fileId = resp.rows[0].profil?.split("/")[8];
     if (fileId) {
-      await storage.deleteFile(process.env.APPWRITE_BUCKET, fileId);
+      try {
+        await storage.deleteFile(process.env.APPWRITE_BUCKET, fileId);
+      } catch (e) {
+        console.log("File not found, skipping deletion.");
+      }
     }
     await storage.createFile(
       process.env.APPWRITE_BUCKET,

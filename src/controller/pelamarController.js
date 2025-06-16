@@ -92,7 +92,11 @@ export async function handleProfil(req, res) {
     const oldFileId = oldProfilUrl?.split("/files/")[1]?.split("/")[0];
 
     if (oldFileId) {
-      await storage.deleteFile(bucketId, oldFileId);
+      try {
+        await storage.deleteFile(bucketId, oldFileId);
+      } catch (error) {
+        console.error("Error deleting old file:", error);
+      }
     }
 
     await storage.createFile(
